@@ -52,13 +52,9 @@ read_file_json() {
     echo "quit"
   } > "$tmpfile"
 
-
-
   $PYSIM -p $READER --script "$tmpfile" | keep_last_json_block
-
   rm -f "$tmpfile"
 }
 
 #fsdump_json "MF/ADF.USIM" "EF.IMSI"
-
 #read_file_json "MF/ADF.USIM" "EF.IMSI"
