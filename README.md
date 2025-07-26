@@ -1,2 +1,2 @@
 # simpa
-Sim Programmer build on pysim
+SIM Programmer using pysim
