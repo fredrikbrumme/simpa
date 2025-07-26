@@ -38,19 +38,32 @@ MNC_LEN=$(echo "$OUTPUT" | jq -r '.mnc_len')
 OUTPUT=$(read_file_json "MF/ADF.USIM" "EF.SPN")
 #echo -e "OUTPUT:\n$OUTPUT"
 SPN=$(echo "$OUTPUT" | jq -r '.spn') 
+#HIDE_IN_OPLMN=$(echo "$OUTPUT" | jq -r '.hide_in_oplmn')
+#SHOW_IN_HPLMN=$(echo "$OUTPUT" | jq -r '.show_in_hplmn')
 
 # HPLMNwAcT
 OUTPUT=$(read_file_json "MF/ADF.USIM" "EF.HPLMNwAcT")
 #echo -e "OUTPUT:\n$OUTPUT"
-HPLMN=$(echo "$OUTPUT" | jq -r '.hplmn')
+HPLMN_MCC=$(echo "$OUTPUT" | jq -r 'map(select(. != null))[0].mcc')
+HPLMN_MNC=$(echo "$OUTPUT" | jq -r 'map(select(. != null))[0].mnc')
+HPLMN_ACT=$(echo "$OUTPUT" | jq -r 'map(select(. != null))[0].act' | tr -d '[:space:]')
 
-#print_card_type 
+# UST
+OUTPUT=$(read_file_json "MF/ADF.USIM" "EF.UST")
+#echo -e "OUTPUT:\n$OUTPUT"
+SERVICES=$(echo "$OUTPUT" | jq -r 'to_entries[] | select(.value.activated == true) | .value.description')
 
-# Printing results 
-echo "CARD:    $CARD"
-echo "ATR:     $ATR"
-echo "ICCID:   $ICCID"
-echo "IMSI:    $IMSI"
-echo "MNC_LEN: $MNC_LEN"
-echo "SPN:     $SPN"
-echo "HPLMN:   $HPLMN"
+# Printing results
+echo "CARD:     $CARD"
+echo "ATR:      $ATR"
+echo "ICCID:    $ICCID"
+echo "IMSI:     $IMSI"
+echo "MNC_LEN:  $MNC_LEN"
+echo "SPN:      $SPN" 
+#echo "HIDE_IN_OPLMN: $HIDE_IN_OPLMN"
+#echo "SHOW_IN_HPLMN: $SHOW_IN_HPLMN"
+echo "HPLMN:    $HPLMN_MCC $HPLMN_MNC AcT:$HPLMN_ACT"
+echo "Services: $(echo "$SERVICES" | wc -l)"
+#echo ""
+#echo "=== Services ==="
+#echo "$SERVICES"

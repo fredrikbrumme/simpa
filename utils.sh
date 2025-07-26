@@ -34,27 +34,32 @@ fsdump_json() {
     echo "quit"
   } > "$tmpfile"
 
-  $PYSIM -p $READER --script "$tmpfile" | keep_last_json_block
+  $PYSIM -p $READER --script "$tmpfile"
   rm -f "$tmpfile"
 }
 
 read_file_json() {
   local sim_path="$1"      # e.g. MF/ADF.USIM
   local file="$2"          # e.g. EF.IMSI
+  local magic_string="MAGIC_STRING_MARKER"
   local tmpfile
 
+  # Create a temporary script file for pySim-shell
   tmpfile=$(mktemp /tmp/pysim_script.XXXXXX)
 
   {
     echo "select $sim_path"
     echo "select $file"
+    echo "echo \"$magic_string\""
     echo "read_binary_decoded"
     echo "quit"
   } > "$tmpfile"
 
-  $PYSIM -p $READER --script "$tmpfile" | keep_last_json_block
+  # Run the pysim command and filter the output (keeping only the decoded JSON from the file)
+  $PYSIM -p $READER --script "$tmpfile" | awk "/$magic_string/ {found=1; next} found"
   rm -f "$tmpfile"
 }
 
 #fsdump_json "MF/ADF.USIM" "EF.IMSI"
 #read_file_json "MF/ADF.USIM" "EF.IMSI"
+#read_file_json "MF/ADF.USIM" "EF.HPLMNwAcT"
