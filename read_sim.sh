@@ -8,9 +8,9 @@ PYSIM_SHELL="../pysim/pySim-shell.py --noprompt"
 # Set reader type (pcsc, osmocom, etc.)
 READER="0"
 
-echo "<<<<<< Garage SIM Programmer (SIMPa) >>>>>>"
+echo "<<<<<< Garage SIM Programmer (SIMPa)"
 sleep 1
-echo "<<<<<< Reading SIM data...           >>>>>>"
+echo "<<<<<< Reading SIM data..."
 
 # Card
 # ATR
@@ -53,6 +53,11 @@ OUTPUT=$(read_file_json "MF/ADF.USIM" "EF.UST")
 #echo -e "OUTPUT:\n$OUTPUT"
 SERVICES=$(echo "$OUTPUT" | jq -r 'to_entries[] | select(.value.activated == true) | .value.description')
 
+# SUCI calculation by the USIM support
+OUTPUT=$(read_file_json "MF/ADF.USIM" "EF.UST")
+#echo -e "OUTPUT:\n$OUTPUT"
+SERVICE125=$(echo "$OUTPUT" | jq -r 'to_entries[] | select(.value.activated == true) | .value.description' | grep "125")
+   
 # Printing results
 echo "CARD:     $CARD"
 echo "ATR:      $ATR"
@@ -63,6 +68,7 @@ echo "SPN:      $SPN"
 #echo "HIDE_IN_OPLMN: $HIDE_IN_OPLMN"
 #echo "SHOW_IN_HPLMN: $SHOW_IN_HPLMN"
 echo "HPLMN:    $HPLMN_MCC $HPLMN_MNC AcT:$HPLMN_ACT"
+echo "SUCI by USIM: $SERVICE125"
 echo "Services: $(echo "$SERVICES" | wc -l)"
 #echo ""
 #echo "=== Services ==="
