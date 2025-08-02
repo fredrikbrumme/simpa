@@ -2,12 +2,6 @@
 
 source "$(dirname "$0")/utils.sh"
 
-# Path to pySim-shell.py
-PYSIM_SHELL="../pysim/pySim-shell.py --noprompt"
-
-# Set reader type (pcsc, osmocom, etc.)
-READER="0"
-
 # RATs
 technologies="NG-RAN"
 
@@ -17,14 +11,16 @@ if [[ $# -ne 5 ]]; then
   exit 1
 fi
 
-echo "<<<<<< Garage SIM Programmer (SIMPa)"
+echo "<<<<<< Garage SIM Programmer (simpa)"
 sleep 1
 
-echo "<<<<<< Writing IMSI=$1 to SIM card."
-write_file_json "MF/ADF.USIM" "EF.IMSI" "{\"imsi\": \"$1\"}"
+echo "<<<<<< Writing IMSI=$1 to SIM card"
+OUTPUT=$(write_file_json "MF/ADF.USIM" "EF.IMSI" "{\"imsi\": \"$1\"}")
+#echo -e "OUTPUT:\n$OUTPUT"
 
 echo "<<<<<< Writing MCC=$2 and MNC=$3 to SIM card"
-write_file_json "MF/ADF.USIM" "EF.HPLMNwAcT" "[{\"mcc\": \"$2\",\"mnc\": \"$3\",\"act\": [\"$technologies\"]},null]"
+OUTPUT=$(write_file_json "MF/ADF.USIM" "EF.HPLMNwAcT" "[{\"mcc\": \"$2\",\"mnc\": \"$3\",\"act\": [\"$technologies\"]},null]")
+#echo -e "OUTPUT:\n$OUTPUT"
 
 #echo "<<<<<< Writing Ki=$4 and OPc=$5 to SIM card"
 #

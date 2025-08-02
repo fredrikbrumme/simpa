@@ -2,13 +2,7 @@
 
 source "$(dirname "$0")/utils.sh"
 
-# Path to pySim-shell.py
-PYSIM_SHELL="../pysim/pySim-shell.py --noprompt"
-
-# Set reader type (pcsc, osmocom, etc.)
-READER="0"
-
-echo "<<<<<< Garage SIM Programmer (SIMPa)"
+echo "<<<<<< Garage SIM Programmer (simpa)"
 sleep 1
 echo "<<<<<< Reading SIM data..."
 
@@ -38,8 +32,8 @@ MNC_LEN=$(echo "$OUTPUT" | jq -r '.mnc_len')
 OUTPUT=$(read_file_json "MF/ADF.USIM" "EF.SPN")
 #echo -e "OUTPUT:\n$OUTPUT"
 SPN=$(echo "$OUTPUT" | jq -r '.spn') 
-#HIDE_IN_OPLMN=$(echo "$OUTPUT" | jq -r '.hide_in_oplmn')
-#SHOW_IN_HPLMN=$(echo "$OUTPUT" | jq -r '.show_in_hplmn')
+HIDE_IN_OPLMN=$(echo "$OUTPUT" | jq -r '.hide_in_oplmn')
+SHOW_IN_HPLMN=$(echo "$OUTPUT" | jq -r '.show_in_hplmn')
 
 # HPLMNwAcT
 OUTPUT=$(read_file_json "MF/ADF.USIM" "EF.HPLMNwAcT")
@@ -57,18 +51,22 @@ SERVICES=$(echo "$OUTPUT" | jq -r 'to_entries[] | select(.value.activated == tru
 OUTPUT=$(read_file_json "MF/ADF.USIM" "EF.UST")
 #echo -e "OUTPUT:\n$OUTPUT"
 SERVICE125=$(echo "$OUTPUT" | jq -r 'to_entries[] | select(.value.activated == true) | .value.description' | grep "125")
-   
+if [[ -z "$SERVICE125" ]]; then
+  SERVICE125="Not supported"
+else
+  SERVICE125=$(echo "$SERVICE125" | sed 's/125 //')
+fi
+
 # Printing results
 echo "CARD:     $CARD"
 echo "ATR:      $ATR"
 echo "ICCID:    $ICCID"
 echo "IMSI:     $IMSI"
 echo "MNC_LEN:  $MNC_LEN"
-echo "SPN:      $SPN" 
-#echo "HIDE_IN_OPLMN: $HIDE_IN_OPLMN"
-#echo "SHOW_IN_HPLMN: $SHOW_IN_HPLMN"
-echo "HPLMN:    $HPLMN_MCC $HPLMN_MNC AcT:$HPLMN_ACT"
-echo "SUCI by USIM: $SERVICE125"
+#echo "SPN:      $SPN"
+echo "SPN:      $SPN (hide_in_oplmn: $HIDE_IN_OPLMN, show_in_hplmn: $SHOW_IN_HPLMN)"
+echo "HPLMN:    $HPLMN_MCC $HPLMN_MNC AcT: $HPLMN_ACT"
+echo "SUCI:     SUCI by USIM $SERVICE125"
 echo "Services: $(echo "$SERVICES" | wc -l)"
 #echo ""
 #echo "=== Services ==="
