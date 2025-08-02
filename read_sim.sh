@@ -1,6 +1,8 @@
 #!/bin/bash
 
 source "$(dirname "$0")/utils.sh"
+source "$(dirname "$0")/read_write_binary.sh"
+source "$(dirname "$0")/read_write_json.sh"
 
 echo "<<<<<< Garage SIM Programmer (simpa)"
 sleep 1

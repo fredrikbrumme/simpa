@@ -1,13 +1,15 @@
 #!/bin/bash
 
 source "$(dirname "$0")/utils.sh"
+source "$(dirname "$0")/read_write_binary.sh"
+source "$(dirname "$0")/read_write_json.sh"
 
 # RATs
 technologies="NG-RAN"
 
 if [[ $# -ne 5 ]]; then
   echo "Usage: $0 \"IMSI\" \"MCC\" \"MNC\" \"Ki\" \"Opc\""
-  echo "Example: $0 \"240993000005976\" \"241\" \"99\" \"00112233445566778899AABBCCDDEEFF\" \"00102030405060708090A0B0C0D0E0F0\""
+  echo "Example: $0 \"240990123456789\" \"240\" \"99\" \"00112233445566778899AABBCCDDEEFF\" \"00102030405060708090A0B0C0D0E0F0\""
   exit 1
 fi
 

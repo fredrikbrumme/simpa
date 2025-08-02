@@ -19,69 +19,6 @@ PYSIM="../pysim/pySim-shell.py"
 # Device path to your smart card reader (adjust as needed)
 READER="0"
 
-read_file_json() {
-  local sim_path="$1"      # e.g. MF/ADF.USIM
-  local file="$2"          # e.g. EF.IMSI
-  local magic_string="MAGIC_STRING_MARKER"
-  local tmpfile
-
-  # Create a temporary script file for pySim-shell
-  tmpfile=$(mktemp /tmp/pysim_script.XXXXXX)
-
-  {
-    echo "select $sim_path"
-    echo "select $file"
-    echo "echo \"$magic_string\""
-    echo "read_binary_decoded"
-    echo "quit"
-  } > "$tmpfile"
-
-  # Run the pysim command and filter the output read_binary_decoded
-  $PYSIM -p $READER --script "$tmpfile" | awk "/$magic_string/ {found=1; next} found"
-  rm -f "$tmpfile"
-}
-
-write_file_json() {
-  local sim_path="$1"    # e.g. MF/ADF.USIM
-  local file="$2"        # e.g. EF.IMSI
-  local jsondata=$3      # JSON data to write
-  local tmpfile
-
-  # Create a temporary script file for pySim-shell
-  tmpfile=$(mktemp /tmp/pysim_script.XXXXXX)
-
-  {
-    echo "verify_adm --pin-is-hex --adm-type ADM1 $ADM1"
-    echo "select $sim_path"
-    echo "select $file"
-    echo "update_binary_decoded '$jsondata'"
-    echo "quit"
-  } > "$tmpfile"
-
-  # Run the pysim commands
-  $PYSIM -p $READER --script "$tmpfile"
-  rm -f "$tmpfile"
-}
-
-read_imsi() {
-  local tmpfile
-
-  # Create a temporary script file for pySim-shell
-  tmpfile=$(mktemp /tmp/pysim_script.XXXXXX)
-
-  {
-    echo "verify_adm --pin-is-hex --adm-type ADM1 $ADM1"
-    echo "select MF/ADF.USIM"
-    echo "apdu \"00A4000C026F07\"" # select EF_IMSI
-    echo "apdu \"00B0000009\"" # read 9 bytes
-    echo "quit"
-  } > "$tmpfile"
-
-  # Run the pysim commands
-  $PYSIM -p $READER --script "$tmpfile"
-  #rm -f "$tmpfile"
-}
-
 decode_apdu_hex() {
    local hex_apdu="$1"
    local hex_decoded
@@ -100,37 +37,49 @@ decode_apdu_hex() {
    echo "$hex_decoded"
 }
 
-write_ki_opc() {
-  local ki="$1"    # e.g. Ki
-  local opc="$2"   # e.g. OPc
-  local tmpfile
+encode_apdu_hex() {
+  local hex_input="$1"
 
-  # Create a temporary script file for pySim-shell
-  tmpfile=$(mktemp /tmp/pysim_script.XXXXXX)
+  # Ensure input is lowercase and remove spaces
+  hex_input=$(echo "$hex_input" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
 
-  {
-    echo "verify_adm --pin-is-hex --adm-type ADM1 $ADM1"
-    echo "quit"
-  } > "$tmpfile"
+  # Validate hex input
+  if ! [[ "$hex_input" =~ ^[0-9a-f]+$ ]]; then
+    echo "Invalid hex input: $hex_input"
+    return 1
+  fi
+  # Ensure input is even length
+  if (( ${#hex_input} % 2 != 0 )); then
+    echo "Hex input must have an even number of characters: $hex_input"
+    return 1
+  fi
+  # Ensure input is not empty
+  if [[ -z "$hex_input" ]]; then
+    echo "Hex input cannot be empty"
+    return 1
+  fi
+  # Ensure input is not too long
+  if (( ${#hex_input} > 128 )); then
+    echo "Hex input is too long (max 128 characters): $hex_input"
+    return 1
+  fi
+  # Ensure input is not too short
+  if (( ${#hex_input} < 2 )); then
+    echo "Hex input is too short (min 2 characters): $hex_input"
+    return 1
+  fi
 
-  # Run the pysim commands
-  $PYSIM -p $READER --script "$tmpfile"
-  rm -f "$tmpfile"
+  local swapped=""
+  for ((i=0; i<${#hex_input}; i+=2)); do
+    local byte="${hex_input:i:2}"
+    local high="${byte:0:1}"
+    local low="${byte:1:1}"
+    swapped+="${low}${high}"
+  done
+
+  local length=$(( ${#hex_input} / 2 ))
+  local length_hex=$(printf "%02X" "$length")
+
+  echo "${length_hex}${swapped}"
 }
-
-#read_imsi
-#resp=$(read_imsi)
-#echo "$resp"
-
-#imsi=$(decode_apdu_hex "081020304050607080")
-#echo "$imsi"
-
-#write_ki_opc "00112233445566778899AABBCCDDEEFF" "00102030405060708090A0B0C0D0E0F0"
-#fsdump_json "MF/ADF.USIM" "EF.IMSI"
-#read_file_json "MF/ADF.USIM" "EF.IMSI"
-#read_file_json "MF/ADF.USIM" "EF.HPLMNwAcT"
-#write_file_json "MF/ADF.USIM" "EF.IMSI" '{"imsi": "123456789123456"}'
-#write_file_json "SMF/ADF.USIM" "EF.IMSI" '{"imsi": "240993000005976"}'
-#read_file_json "MF/ADF.USIM" "EF.HPLMNwAcT"
-#write_file_json "MF/ADF.USIM" "EF.HPLMNwAcT" '[{"mcc": "240","mnc": "99","act": ["NG-RAN"]},null]'
 
