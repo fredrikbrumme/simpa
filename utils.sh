@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "$(dirname "$0")/passwords.sh"
+source "$(dirname "$0")/secrets.sh"
 
 # Ensure ADM1 and ADM2 are set
 if [[ -z "$ADM1" ]]; then
@@ -13,11 +13,27 @@ if [[ -z "$ADM2" ]]; then
   exit 1
 fi
 
+# Ensure ADM1 and ADM2 are set
+if [[ -z "$PREFIX_OPC" ]]; then
+  echo "PREFIX_OPC is empty. Exiting."
+  exit 1
+fi
+
+if [[ -z "$SUFFIX_OPC" ]]; then
+  echo "SUFFIX_OPC is empty. Exiting."
+  exit 1
+fi
+
 # Path to pySim-shell
 PYSIM="../pysim/pySim-shell.py"
 
 # Device path to your smart card reader (adjust as needed)
 READER="0"
+
+crc16_ccitt_hex() {
+  local hex_input="$1"
+  python3 -c "import libscrc; print(format(libscrc.ccitt_false(bytes.fromhex('$hex_input')), 'x'))"
+}
 
 decode_apdu_hex() {
    local hex_apdu="$1"

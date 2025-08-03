@@ -20,9 +20,10 @@ echo "<<<<<< Writing IMSI=$1 to SIM card"
 OUTPUT=$(write_file_json "MF/ADF.USIM" "EF.IMSI" "{\"imsi\": \"$1\"}")
 #echo -e "OUTPUT:\n$OUTPUT"
 
-echo "<<<<<< Writing MCC=$2 and MNC=$3 to SIM card"
+echo "<<<<<< Writing MCC=$2 and MNC=$3 with RATs=$technologies to SIM card"
 OUTPUT=$(write_file_json "MF/ADF.USIM" "EF.HPLMNwAcT" "[{\"mcc\": \"$2\",\"mnc\": \"$3\",\"act\": [\"$technologies\"]},null]")
 #echo -e "OUTPUT:\n$OUTPUT"
 
-#echo "<<<<<< Writing Ki=$4 and OPc=$5 to SIM card"
-#
+echo "<<<<<< Writing Ki=$4 and OPc=$5 to SIM card"
+OUTPUT=$(write_ki_opc $4 $5)
+#echo -e "OUTPUT:\n$OUTPUT"
