@@ -2,7 +2,7 @@
 SIM Programmer using pysim
 
 # Requirements
-- pysim
+- [pysim](https://osmocom.org/projects/pysim/wiki)
 - jq
 
 Passwords (pin) for ADM1 and ADM2 stored in local file ./passwords.sh 
