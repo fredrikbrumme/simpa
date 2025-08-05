@@ -4,9 +4,12 @@ SIM Programmer using pysim
 # Requirements
 - [pysim](https://osmocom.org/projects/pysim/wiki)
 - jq
+- pcsc
 
 # Setup
+- Install pysim as described on link above
 ```
+sudo apt install jq
 sudo apt install pcsc-tools
 ```
 Passwords (pin) for ADM1 and ADM2 stored in local file ./secrets.sh 
