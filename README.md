@@ -12,6 +12,8 @@ cat << 'EOF' > secrets.sh
 
 ADM1="1234"
 ADM2="5678"
+PREFIX_OPC="1234"
+SUFFIX_OPC="5678"
 EOF
 ```
 # read SIM
