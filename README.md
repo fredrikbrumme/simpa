@@ -7,7 +7,7 @@ SIM Programmer using pysim
 
 Passwords (pin) for ADM1 and ADM2 stored in local file ./passwords.sh 
 ```
-cat << 'EOF' > passwords.sh
+cat << 'EOF' > secrets.sh
 #!/bin/bash
 
 ADM1="1234"
