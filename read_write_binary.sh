@@ -112,9 +112,3 @@ write_ki_opc() {
   $PYSIM -p $READER --script "$tmpfile" | awk "/$output_marker/ {found=1; next} found"
   rm -f "$tmpfile"
 }
-
-#read_ki_raw
-#read_opc_raw
-#write_ki_opc "00112233445566778899AABBCCDDEEFF" "00102030405060708090A0B0C0D0E0F0"
-#read_ki_raw
-

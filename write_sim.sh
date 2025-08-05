@@ -13,7 +13,17 @@ if [[ $# -ne 5 ]]; then
   exit 1
 fi
 
-echo "<<<<<< Garage SIM Programmer (simpa)"
+# Card
+OUTPUT=$(pcsc_scan -t 1)
+#echo -e "OUTPUT:\n$OUTPUT"
+CARD=$(echo "$OUTPUT" | awk '/Possibly identified card/ {getline; getline; print}' | tr -d '[:space:]' | sed 's/\x1b\[[0-9;]*m//g')
+
+if [[ "$CARD" != *SmartjacSMAOT100* ]]; then
+  echo "Card not supported"
+  exit 1
+fi
+
+echo "<<<<<< Garage SIM Programme(simpa)"
 sleep 1
 
 echo "<<<<<< Writing IMSI=$1 to SIM card"

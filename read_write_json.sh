@@ -46,12 +46,3 @@ write_file_json() {
   rm -f "$tmpfile"
 }
 
-#read_file_json "MF/ADF.USIM" "EF.IMSI"
-#write_file_json "MF/ADF.USIM" "EF.IMSI" '{"imsi": "123456789123456"}'
-#write_file_json "SMF/ADF.USIM" "EF.IMSI" '{"imsi": "240993000005976"}'
-
-#read_file_json "MF/ADF.USIM" "EF.HPLMNwAcT"
-
-#read_file_json "MF/ADF.USIM" "EF.HPLMNwAcT"
-#write_file_json "MF/ADF.USIM" "EF.HPLMNwAcT" '[{"mcc": "240","mnc": "99","act": ["NG-RAN"]},null]'
-

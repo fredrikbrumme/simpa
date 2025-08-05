@@ -98,4 +98,3 @@ encode_apdu_hex() {
 
   echo "${length_hex}${swapped}"
 }
-

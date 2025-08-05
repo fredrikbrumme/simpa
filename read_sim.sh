@@ -8,8 +8,7 @@ echo "<<<<<< Garage SIM Programmer (simpa)"
 sleep 1
 echo "<<<<<< Reading SIM data..."
 
-# Card
-# ATR
+# Card + ATR
 OUTPUT=$(pcsc_scan -t 1)
 #echo -e "OUTPUT:\n$OUTPUT"
 CARD=$(echo "$OUTPUT" | awk '/Possibly identified card/ {getline; getline; print}' | tr -d '[:space:]' | sed 's/\x1b\[[0-9;]*m//g')
