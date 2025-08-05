@@ -9,7 +9,7 @@ SIM Programmer using pysim
 ```
 sudo apt install pcsc-tools
 ```
-Passwords (pin) for ADM1 and ADM2 stored in local file ./passwords.sh 
+Passwords (pin) for ADM1 and ADM2 stored in local file ./secrets.sh 
 ```
 cat << 'EOF' > secrets.sh
 #!/bin/bash
