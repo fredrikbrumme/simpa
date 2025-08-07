@@ -11,6 +11,11 @@ SIM Programmer using pysim
 ```
 sudo apt install jq
 sudo apt install pcsc-tools
+python3 -m venv .venv
+source .venv/bin/activate
+pip3 install flask libscrc pyscard
+# Install requirements from pysim
+pip3 install -r ~/pysim/requirements.txt
 ```
 Passwords (pin) for ADM1 and ADM2 stored in local file ./secrets.sh 
 ```

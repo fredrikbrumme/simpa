@@ -31,7 +31,7 @@ MNC_LEN=$(echo "$OUTPUT" | jq -r '.mnc_len')
 
 # SPN
 OUTPUT=$(read_file_json "MF/ADF.USIM" "EF.SPN")
-#echo -e "OUTPUT:\n$OUTPUT"
+echo -e "OUTPUT:\n$OUTPUT"
 SPN=$(echo "$OUTPUT" | jq -r '.spn') 
 HIDE_IN_OPLMN=$(echo "$OUTPUT" | jq -r '.hide_in_oplmn')
 SHOW_IN_HPLMN=$(echo "$OUTPUT" | jq -r '.show_in_hplmn')
